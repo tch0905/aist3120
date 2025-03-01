@@ -1,0 +1,337 @@
+%  This LaTeX template is based on T.J. Hitchman's work which is itself based on Dana Ernst's template.  
+% 
+% --------------------------------------------------------------
+% Skip this stuff, and head down to where it says "Start here"
+% --------------------------------------------------------------
+ 
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\newenvironment{statement}[2][Statement]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+
+\begin{document}
+
+\subsubsection*{(1)  Loss Computation}
+
+
+\[
+\begin{pmatrix}
+0.4 & -0.1 \\
+-1 & 0.6 \\
+0.5 & 1
+\end{pmatrix}
+\begin{pmatrix}
+1 \\
+-1
+\end{pmatrix}
+=
+\begin{pmatrix}
+\frac{1}{2} \\
+-\frac{8}{5} \\
+-\frac{1}{2}
+\end{pmatrix}
+\]
+
+\[
+h = \text{ReLU}(Wx) =
+\begin{pmatrix}
+\text{ReLU}(1/2) \\
+\text{ReLU}(-8/5) \\
+\text{ReLU}(-1/2)
+\end{pmatrix}
+=
+\begin{pmatrix}
+\max(0, 0.5) \\
+\max(0, -1.6) \\
+\max(0, -0.5)
+\end{pmatrix}
+=
+\begin{pmatrix}
+0.5 \\
+0 \\
+0
+\end{pmatrix}
+\]
+
+
+
+
+\[
+z = Vh = 
+\begin{pmatrix}
+0.8 & 1.2 & -0.5 \\
+0.7 & -0.9 & 0.3
+\end{pmatrix}
+\begin{pmatrix}
+0.5 \\
+0 \\
+0
+\end{pmatrix}
+=
+\begin{pmatrix}
+0.8 \cdot 0.5 + 1.2 \cdot 0 + (-0.5) \cdot 0 \\
+0.7 \cdot 0.5 + (-0.9) \cdot 0 + 0.3 \cdot 0
+\end{pmatrix}
+=
+\begin{pmatrix}
+0.4 \\
+0.35
+\end{pmatrix}
+\]
+
+
+
+
+
+\[
+\hat{y_0} = \frac{\exp(0.4)}{\exp(0.4) + \exp(0.35)} =  \approx 0.5125
+\]
+
+\[
+\hat{y_1} =\frac{\exp(0.35)}{\exp(0.4) + \exp(0.35)} =  \approx 0.4875
+\]
+\[
+\hat{y} = [0.5125, 0.4875]
+\]
+
+\[
+L = -\left(y_0 \log(\hat{y}_0) + y_1 \log(\hat{y}_1)\right)
+\]
+
+\[
+L = -\left(1 \cdot \log(0.5125) + 0 \cdot \log(0.4875)\right)
+\]
+
+
+
+
+\[
+L = -\log(0.5125)
+\]
+
+\[
+L \approx -(-0.6781) = 0.6781
+\]
+
+
+
+
+
+\newpage
+\subsubsection*{(2) Gradient Backpropagation}
+
+
+
+
+
+
+The gradient of \( L \) with respect to \( V \) is calculated as:
+\[
+\frac{\partial L}{\partial V} = \frac{\partial L}{\partial z} \cdot \frac{\partial z}{\partial V},
+\]
+where \( z = Vh \) 
+
+
+\[
+L = -\sum_{k=0}^{K-1} y_k \log(\hat{y}_k),
+\]
+
+\[
+\hat{y}_k = \frac{\exp(z_k)}{\sum_{i=0}^{K-1} \exp(z_i)}.
+\]
+
+\[
+L = -\sum_{k\in K} y_k \log\left(\frac{\exp(z_k)}{\sum_{k\in K }^{} \exp(z_k)}\right).
+\]
+
+Simplify the logarithm:
+\[
+L = -\sum_{k\in K}^{} y_k \left(z_k - \log\left(\sum_{k\in K}^{} \exp(z_k)\right)\right).
+\]
+
+
+\[
+\frac{\partial L}{\partial z_i} = -\sum_{k\in K}^{} y_k \left(\frac{\partial z_k}{\partial z_i} - \frac{\partial}{\partial z_i} \log\left(\sum_{k\in K}^{} \exp(z_k)\right)\right).
+\]
+
+1. \(\frac{\partial z_j}{\partial z_k} = 1\) if \( j = k \)
+
+
+2. \(\frac{\partial}{\partial z_k} \log\left(\sum_{i=0}^{K-1} \exp(z_i)\right) = \frac{\exp(z_k)}{\sum_{i=0}^{K-1} \exp(z_i)} = \hat{y}_k\).
+
+\vspace{1cm}
+Thus:
+\[
+\frac{\partial L}{\partial z_i} = -\left(y_i - \hat{y}_i \sum_{k \in K}^{} y_k\right).
+\]
+
+Since \(\sum_{j=0}^{K-1} y_j = 1\). Therefore:
+\[
+\frac{\partial L}{\partial z_k} = -(y_k - \hat{y}_k).
+\]
+
+\[
+\frac{\partial L}{\partial z} = \hat{y} - y,
+\]
+
+\[
+\frac{\partial L}{\partial z} = [\hat{y}_0 - y_0, \hat{y}_1 - y_1] = [0.5125 - 1, 0.4875 - 0] = [-0.4875, 0.4875].
+\]
+
+                                                            \( z = Vh \), where \( h = [0.5, 0, 0] \)
+\[
+\frac{\partial z}{\partial V} = h^T\otimes \mathbb{I}
+\]
+
+
+\[
+\frac{\partial z}{\partial V} = \begin{bmatrix}
+    0.5 &0 &0 
+\end{bmatrix}.
+\]
+
+\[
+\frac{\partial L}{\partial V} = \frac{\partial L}{\partial z} \cdot \frac{\partial z}{\partial V}.
+\]
+Substituting the values:
+\[
+\frac{\partial L}{\partial V} =
+\begin{bmatrix}
+-0.4875 \cdot 0.5 & -0.4875 \cdot 0 & -0.4875 \cdot 0 \\
+0.4875 \cdot 0.5 & 0.4875 \cdot 0 & 0.4875 \cdot 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+-0.24375 & 0 & 0 \\
+0.24375 & 0 & 0
+\end{bmatrix}.
+\]
+
+
+
+
+
+
+
+
+\newpage
+
+
+\subsection*{The partial derivative of \( L \) with respect to \(W \)}
+
+\[
+\frac{\partial L}{\partial W} = \frac{\partial L}{\partial h} \cdot \frac{\partial h}{\partial W},
+\]
+where \( h = \text{ReLU}(Wx) \).
+\[\frac{\partial L}{\partial h} =\frac{\partial L}{\partial z}\frac{\partial z}{\partial h} \]
+
+\[
+\frac{\partial L}{\partial h} =  \frac{\partial L}{\partial z}\cdot V^T
+\]
+
+\[
+\frac{\partial L}{\partial h} =
+\begin{bmatrix}
+0.8 & 0.7 \\
+1.2 & -0.9 \\
+-0.5 & 0.3
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+-0.4875 \\
+0.4875
+\end{bmatrix}
+=
+\begin{bmatrix}
+-0.39 + 0.34125 \\
+-0.585 - 0.43875 \\
+0.24375 + 0.14625
+\end{bmatrix}
+=
+\begin{bmatrix}
+-0.04875 \\
+-1.02375 \\
+0.39
+\end{bmatrix}.
+\]
+
+\subsubsection*{Step 2: Compute \( \frac{\partial h}{\partial W} \)}
+
+The hidden layer uses the ReLU activation:
+\[
+h = \text{ReLU}(Wx).
+\]
+
+where \( \text{ReLU}'(Wx) \) is the derivative of the ReLU function, which is \( 1 \) for positive inputs and \( 0 \) otherwise. 
+Thus:
+\[
+\frac{\partial h}{\partial W}
+=
+x^T
+
+\]
+
+\subsubsection*{Step 3: Compute \( \frac{\partial L}{\partial W} \)}
+
+Using the chain rule:
+\[
+\frac{\partial L}{\partial W} = \frac{\partial L}{\partial h} \cdot \frac{\partial h}{\partial W}.
+\]
+Substituting the values:
+\[
+\frac{\partial L}{\partial W} =
+\begin{bmatrix}
+-0.04875 \\
+-1.02375 \\
+0.39
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+1 & -1
+\end{bmatrix}
+=
+\begin{bmatrix}
+-0.04875 \cdot 1 & -0.04875 \cdot (-1) \\
+-1.02375 \cdot 1 & -1.02375 \cdot (-1) \\
+0.39 \cdot 1 & 0.39 \cdot (-1)
+\end{bmatrix}
+=
+\begin{bmatrix}
+-0.04875 & 0.04875 \\
+-1.02375 & 1.02375 \\
+0.39 & -0.39
+\end{bmatrix}.
+\]
+
+\subsection*{Final Results}
+
+1. Gradient of \( L \) with respect to \( V \):
+\[
+\frac{\partial L}{\partial V} =
+\begin{bmatrix}
+-0.24375 & 0 & 0 \\
+0.24375 & 0 & 0
+\end{bmatrix}.
+\]
+
+2. Gradient of \( L \) with respect to \( W \):
+\[
+\frac{\partial L}{\partial W} =
+\begin{bmatrix}
+-0.04875 & 0.04875 \\
+-1.02375 & 1.02375 \\
+0.39 & -0.39
+\end{bmatrix}.
+\]
+
+
+
+
+
+
+
+ 
+\end{document}
