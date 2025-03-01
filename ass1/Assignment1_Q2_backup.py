@@ -5,6 +5,12 @@ import torch.nn as nn
 torch.manual_seed(3120)
 
 class MLP(nn.Module):
+    """
+    A simple two-layer feed-forward MLP
+    
+    TODO:
+      - Implement the forward pass in forward().
+    """
     def __init__(self, input_dim, hidden_dim, output_dim):
         super(MLP, self).__init__()
         self.fc1_weight = nn.Parameter(torch.randn(hidden_dim, input_dim) * 0.1)
@@ -15,30 +21,27 @@ class MLP(nn.Module):
         self.relu = nn.ReLU()
     
     def forward(self, x):
-        h = torch.mm(x, self.fc1_weight.t()) + self.fc1_bias
-        h = self.relu(h)
-        out = torch.mm(h, self.fc2_weight.t()) + self.fc2_bias
-        return out
-
+        # TODO: Implement the forward pass using self.fc1_weight, self.fc1_bias,
+        # self.fc2_weight, self.fc2_bias, and self.relu
+        # Hint: Use torch.mm for matrix multiplication
+        pass
 
 def my_cross_entropy_loss(outputs, labels):
     """
     Compute the cross-entropy loss for the given outputs and labels.
-
+    
     Args:
         outputs: [batch_size, num_classes] - Raw logits from the model
         labels: [batch_size] - Ground truth class indices
-
+    
+    TODO: Implement the cross-entropy loss manually following these steps:
+      1. Apply softmax to outputs to get probabilities
+      2. Get the predicted probability for the correct class
+      3. Apply negative log likelihood
+      4. Average over the batch
     """
-
-    probs = torch.softmax(outputs, dim=1)
-    batch_size = outputs.size(0)
-
-    selected_probs = probs[torch.arange(batch_size), labels]
-    loss = -torch.log(selected_probs).mean()
-    return loss
-
-
+    # TODO: Implement the cross entropy loss
+    pass
 
 def main():
     input_dim = 10
