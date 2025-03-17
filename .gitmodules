@@ -1,0 +1,3 @@
+[submodule "proj/aist3120_project"]
+	path = proj/aist3120_project
+	url = https://github.com/tch0905/aist3120_project.git

@@ -12,6 +12,7 @@ class SelfAttention(nn.Module):
         self.key = nn.Linear(d_model, d_model)
         self.value = nn.Linear(d_model, d_model)
         
+        
     def forward(self, x):
         """
         x: input tensor of shape (batch_size, seq_len, d_model)
